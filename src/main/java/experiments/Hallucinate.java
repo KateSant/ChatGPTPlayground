@@ -5,21 +5,25 @@ import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.service.OpenAiService;
 
+import java.time.Duration;
 import java.util.List;
 
-public class ChatWithTemperature {
+public class Hallucinate {
 
     private double temperature;
-    private static String SYSTEM_PROMPT = "You are a chat bot";
-    private static String USER_PROMPT = "Generate a tag line for an ice cream shop";
-    public ChatWithTemperature(double temperature){
+    private String question;
+    private static String SYSTEM_PROMPT = "You are a crazy chat bot";
+
+    public Hallucinate(double temperature, String question){
+
         this.temperature = temperature;
+        this.question = question;
     }
 
     public List<ChatCompletionChoice> chat(){
 
         String key = System.getenv("OPENAI_KEY");
-        OpenAiService openAiService = new OpenAiService(key);
+        OpenAiService openAiService = new OpenAiService(key, Duration.ofSeconds(20));
         ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest
                 .builder()
                 .model("gpt-3.5-turbo")
@@ -27,7 +31,7 @@ public class ChatWithTemperature {
                 .messages(
                         List.of(
                                 new ChatMessage("system", SYSTEM_PROMPT),
-                                new ChatMessage("user", USER_PROMPT)))
+                                new ChatMessage("user", question)))
                 .build();
 
 
